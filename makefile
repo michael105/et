@@ -15,10 +15,11 @@ PROG=et
 SINGLERUN=1 
 
 #(Disables the -Os flag
-#DISABLEOs=1
+DISABLEOs=1
+#(OSX: -Os works with homebrew's gcc. Not with the native compiler)
 
 # GCC
-GCC=gcc-8
+GCC=gcc
 
 # LD
 #LD=ld
