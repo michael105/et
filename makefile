@@ -14,9 +14,6 @@ PROG=et
 # Don't create obj files, include evrything in one gcc run.
 SINGLERUN=1 
 
-#(Disables the -Os flag
-DISABLEOs=1
-#(OSX: -Os works with homebrew's gcc. Not with the native compiler)
 
 # GCC
 GCC=gcc
@@ -37,8 +34,9 @@ default:
 # make native 
 # compile with dynamic loading, os native libs
 native: $(PROG).c
+	$(info Building dynamic, linked to host\'s libc )
 	$(info call "make getminilib" to fetch and extract the "minilib" and compile $(PROG) static (recommended) )
-	gcc -o calc calc.c
+	gcc -O1 -o $(PROG) $(PROG).c
 
 
 ifndef with-minilib
