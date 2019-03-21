@@ -14,6 +14,7 @@ PROG=et
 # Don't create obj files, include evrything in one gcc run.
 SINGLERUN=1 
 
+NOINCLUDE=1
 
 # GCC
 GCC=gcc

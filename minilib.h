@@ -3,6 +3,7 @@
 // uncomment unwanted functions.
 
 /// Len of buf used by read, mprintf, ..
+//#define mini_buf 4096
 #define mini_buf 65536
 
 #define mini_start start
@@ -18,7 +19,7 @@
 #define mini_lseek
 
 #define mini_mprints
-#define mini_mprintf
+#define mini_printf
 //#define mini_perror
 #define mini_msprintf
 #define mini_mfprintf
@@ -56,4 +57,5 @@
 
 
 #include "minilib/include/minilib_header.h"
+//#include "minilib/minilib_implementation.c"
 

@@ -45,6 +45,7 @@ usage: ue <filename> # <filename> NOT optional
 //#define TM  // viish toggle-mode. Switch with # between edit / move
 
 #include "minilib.h"
+#include "minilib.c"
 
 
 #ifndef POINTER
