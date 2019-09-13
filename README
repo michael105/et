@@ -1,6 +1,8 @@
 et - the (extremely tiny) editor
 a tiny (8k 32bit linux, 20k OSX 64bit) terminal text editor
 
+At the moment, only linux x64 might work.
+OSX, linux x32 untested.
 
 Based on work done by Terry Loveall (2005) and Anthony Howe (1991)
 
