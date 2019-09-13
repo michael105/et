@@ -45,8 +45,6 @@ usage: ue <filename> # <filename> NOT optional
 //#define TM  // viish toggle-mode. Switch with # between edit / move
 
 #include "minilib.h"
-#include "minilib.c"
-
 
 #ifndef POINTER
 #ifdef X64
@@ -138,7 +136,7 @@ typedef struct {
 COORD xy;
 
 
-#define writen(str,n) write(stdout,str,n)
+#define writen(str,n) write(STDOUT_FILENO,str,n)
 #define writestr(str) writen(str,sizeof(str)-1)
 #define write1(str) writen(str,strlen(str))
 #define getch() (char)getkey()
@@ -274,9 +272,7 @@ void highlight(int hl){
 }
 
 void gotoxy(int x, int y){
-		char str[16];
-		sprintf(str,"\033[%05d;%05dH",y,x);
-		write(stdout,str,14);
+		fprintf(stdout,"\033[%d;%dH",y,x);
 		xy.Y=y; xy.X=x;
 }
 
@@ -330,7 +326,7 @@ int getkey(){
 		} kb;
 
 		kb.keycode = 0;
-		read(0, &kb.key, 1);
+		read(0, (POINTER*)&kb.key, 1);
 
 		if ((kb.key == 0x1b) && (keyhit())) { 
 				kb.keycode = 0xFF000000;
@@ -340,10 +336,10 @@ int getkey(){
 				read(0, (void *) &kb.seqstart, 5);
 #endif
 		}
-		int a;
+		//int a;
 		debug("seq: 27 " );
-		for ( a=4;a<=7;a++ )
-				debug( "%d ", kb.seq[a] );
+		//for ( a=4;a<=7;a++ )
+		//		debug( "%d ", kb.seq[a] );
 		debug("\n");
 		debug("keycode: 0x%x\n",kb.keycode);
 		debug("c: %u\n", kb.key);
@@ -719,7 +715,7 @@ int main(int argc, char **argv){
 				}*/
 		if(0 < (i = open(filename = *argv, O_RDONLY,0))) {
 				debug("Opened, i: %d\n",i);
-				etxt += read(i, buf, BUF);
+				etxt += read(i, (POINTER*)buf, BUF);
 				if(etxt < buf) etxt = buf;
 				else{
 						char *p = etxt;
