@@ -44,13 +44,23 @@ usage: ue <filename> # <filename> NOT optional
 //#define dodebug
 //#define TM  // viish toggle-mode. Switch with # between edit / move
 
+#ifdef MLIB
 #include "minilib.h"
+#else
+#include <stdio.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <termios.h>
+#include <sys/ioctl.h>
+#endif
 
 #ifndef POINTER
-#ifdef X64
-#define POINTER long int
-#else
+#ifndef X64
 #define POINTER int
+#else
+#define POINTER long int
 #endif
 #endif
 
@@ -65,8 +75,8 @@ int termcolumns=80;
 int termlines=24;
 
 const char helpt[] =
-"\nae ver. 150\n"
-"The tiny (8k Linux 32bit, 16k Osx x64) editor.\n\n"
+"\net ver. 155\n"
+"The tiny (8.8k Linux 64bit) editor.\n\n"
 "\n"
 "2014-2019 Michael (Misc) Myer\n"
 "Based on work done by Terry Loveall (2005) and Anthony Howe (1991)\n"
@@ -272,7 +282,10 @@ void highlight(int hl){
 }
 
 void gotoxy(int x, int y){
-		fprintf(stdout,"\033[%d;%dH",y,x);
+		union { char str[12]; int i[2];} u;
+		u.i[2] = 0;
+		sprintf(u.str,"\033[%d;%dH\0",y,x);
+		write1(u.str);
 		xy.Y=y; xy.X=x;
 }
 
@@ -640,7 +653,7 @@ void redraw(){
 		}
 		if(clearscreen) {
 				debug("clearscreen\n");
-				printf("\033[H\033[J\n"); 
+				writestr("\033[H\033[J\n"); 
 				clearscreen = 0;
 		}      // clear screen
 		pageend = pagestart;

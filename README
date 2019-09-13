@@ -1,5 +1,5 @@
 et - the (extremely tiny) editor
-a tiny (8k 32bit linux, 20k OSX 64bit) terminal text editor
+a tiny (8k 32bit linux, 8.4k OSX 64bit) terminal text editor
 
 At the moment, only linux x64 might work.
 OSX, linux x32 untested.
