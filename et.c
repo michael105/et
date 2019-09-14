@@ -1,7 +1,7 @@
 //misc
 //
 // te (tinyeditor) - the tiny (8k 32bit linux, 20k OSX 64bit) editor
-//   Based on work done by Terry Loveall (2005) and Anthony Howe (1991)\
+//   Based on work done by Terry Loveall (2005) and Anthony Howe (1991)
 //
 // Added Cursor keys and function keys (extended keycodes), debug, "vi" mode (enable with define TM)
 //   ported to x64 OSX, ported to minilib
