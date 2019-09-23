@@ -1,6 +1,11 @@
 //misc
 //
-// te (tinyeditor) - the tiny (8k 32bit linux, 20k OSX 64bit) editor
+// et (tinyeditor) - the extremely tiny (8k 32bit linux, 20k OSX 64bit) editor,
+//   statically compiled with minilib
+//
+//	compile: make
+//	install: make install
+//
 //   Based on work done by Terry Loveall (2005) and Anthony Howe (1991)
 //
 // Added Cursor keys and function keys (extended keycodes), debug, "vi" mode (enable with define TM)
@@ -11,9 +16,7 @@
 // Michael (Misc) Myer misc.myer@zolo.com
 //   2013-2019
 //
-// Notes..
 // edit: vi-modus. aes encryption
-// tinyedit (te)
 //
 // am besten: escape sequences als union { integer[2],char[8] } speichern.
 // zum Vergleichen scheinen die letzten 4 (von 5) Werten der Sequenz zu genügen,
@@ -151,115 +154,10 @@ COORD xy;
 #define write1(str) writen(str,strlen(str))
 #define getch() (char)getkey()
 
-void left();
-void down();
-void up();
-void right();
-void wleft();
-void pgdown();
-void pgup();
-void wright();
-void lnbegin();
-void lnend();
-void top();
-void bottom();
-void delete_one();
-void bksp();
-void delrol();
-void delline();
-void undo();
-void writef();
-void find();
-void findnext();
-void findprev();
-void gotoln();
-void quit();
-void help();
-void nop();
-void redraw();
-
 
 
 
 void switchmode();
-
-
-#ifndef TM
-
-
-//misc v // escape sequences and keycodes
-// Not sure now. Doesn't work on osx; either cause x64 or endianness
-#ifdef OSX
-int keycodetable[] = {
-		0xff00445b, 0xff00425b, 0xff00415b, 0xff00435b,   //Cursor left,down,up,right
-		0x323b315b, 0xa4, 0xbc, 0x323b315b, // shift+left (wordleft), pgdown:ä , pgup:ü, shift+right (wordright) (shift-keft/right doesnt work)
-		// ctrl+left = 44353b31; ctrl+right = 43353b31
-		0xff000062, 0xff000066, 0x84, 0x9c,   // home, end, Ä,Ü
-		0xff007e33, 0x7f, 0x82, 0xa8,          // Del, Backspace, Alt+d, ALT+U
-		0x91, 0x92, 0x7e , 0x80,  // Alt+ w f n p
-		//0xff00514f, 0x7e35315b, 0x7e37315b , 0x7e38315b,  // F2, F5, F6, F7
-		0xa9,  0xaa, 0xae, 0xab,  // F8, F1, ALT+R, ALT+Q
-		0x82, // alt+d
-		0
-};
-#else
-int keycodetable[] = {
-		0xff000044, 0xff000042, 0xff000041, 0xff000043,   //Cursor left,down,up,right
-		0x44333b31, 0xff007e36, 0xff007e35, 0x43333b31, // alt+left, pgdown, pgup, alt+right
-		// ctrl+left = 44353b31; ctrl+right = 43353b31
-		0xff000048, 0xff000046, 0x48353b31, 0x46353b31,   // home, end, ctrl+home, ctrl+end
-		0xff007e33, 0x7f, 0xff000000, 'U' & 0x1f,          // Del, Backspace, Alt+Del, Ctrl+U
-		0xff000051, 0xff7e3531, 0xff7e3731 , 0xff7e3831,  // F2, F5, F6, F7
-		0xff7e3931,  0xff000050, 'L' & 0x1f, 0xff7e3132,  // F8, F1, ctrl+L, F10
-		0x7e333b33, // alt+del
-		0
-};
-#endif
-//misc ^
-
-
-// command key function array, one to one correspondence to key array, above
-void (*func[]) () = {
-		left, down, up, right,
-		wleft, pgdown, pgup, wright,
-		lnbegin, lnend, top, bottom,
-		delete_one, bksp, delrol, undo,
-		writef, find, findnext, findprev,
-		gotoln,	help, redraw, quit, 
-		delline,
-		nop
-};
-
-
-
-#else
-
-char keycodetable[] = "jkil" 
-"JmKoIL"
-"OM"
-"\x7f" "u," 
-"#"
-
-"wfnp"
-"ghr"
-"qd";
-
-// command key function array, one to one correspondence to key array, above
-void (*func[]) () = {
-		left, down, up, right,
-		wleft, pgdown, pgdown, pgup, pgup, wright,
-		top, bottom,
-		bksp, undo, delete_one,
-		switchmode,
-		//		lnbegin, lnend, top, bottom,
-//		delete_one, bksp, delrol, undo,
-		writef, find, findnext, findprev,
-		gotoln,	help, redraw, 
-		quit, 
-		delline,
-		nop
-};
-#endif
 
 void GetSetTerm(int set){
 		struct termios *termiop = &orig;
@@ -617,6 +515,7 @@ void quit(){
 		done = 1;
 }
 
+void nop(){}
 //#pragma GCC push_options
 //#pragma GCC optimize("O0")
 
@@ -631,7 +530,6 @@ void help(){
 //#pragma GCC pop_options
 
 
-void nop(){}
 
 void redraw(){
 		int i=0, j=0;
@@ -701,6 +599,89 @@ void redraw(){
 
 		gotoxy((termcolumns > col+1) ? col+1 : termcolumns, row+2);
 }
+
+
+
+#ifndef TM
+
+
+//misc v // escape sequences and keycodes
+// Not sure now. Doesn't work on osx; either cause x64 or endianness
+#ifdef OSX
+int keycodetable[] = {
+		0xff00445b, 0xff00425b, 0xff00415b, 0xff00435b,   //Cursor left,down,up,right
+		0x323b315b, 0xa4, 0xbc, 0x323b315b, // shift+left (wordleft), pgdown:ä , pgup:ü, shift+right (wordright) (shift-keft/right doesnt work)
+		// ctrl+left = 44353b31; ctrl+right = 43353b31
+		0xff000062, 0xff000066, 0x84, 0x9c,   // home, end, Ä,Ü
+		0xff007e33, 0x7f, 0x82, 0xa8,          // Del, Backspace, Alt+d, ALT+U
+		0x91, 0x92, 0x7e , 0x80,  // Alt+ w f n p
+		//0xff00514f, 0x7e35315b, 0x7e37315b , 0x7e38315b,  // F2, F5, F6, F7
+		0xa9,  0xaa, 0xae, 0xab,  // F8, F1, ALT+R, ALT+Q
+		0x82, // alt+d
+		0
+};
+#else
+int keycodetable[] = {
+		0xff000044, 0xff000042, 0xff000041, 0xff000043,   //Cursor left,down,up,right
+		0x44333b31, 0xff007e36, 0xff007e35, 0x43333b31, // alt+left, pgdown, pgup, alt+right
+		// ctrl+left = 44353b31; ctrl+right = 43353b31
+		0xff000048, 0xff000046, 0x48353b31, 0x46353b31,   // home, end, ctrl+home, ctrl+end
+		0xff007e33, 0x7f, 0xff000000, 'U' & 0x1f,          // Del, Backspace, Alt+Del, Ctrl+U
+		0xff000051, 0xff7e3531, 0xff7e3731 , 0xff7e3831,  // F2, F5, F6, F7
+		0xff7e3931,  0xff000050, 'L' & 0x1f, 0xff7e3132,  // F8, F1, ctrl+L, F10
+		0x7e333b33, // alt+del
+		0
+};
+#endif
+//misc ^
+
+
+// command key function array, one to one correspondence to key array, above
+void (*func[]) () = {
+		left, down, up, right,
+		wleft, pgdown, pgup, wright,
+		lnbegin, lnend, top, bottom,
+		delete_one, bksp, delrol, undo,
+		writef, find, findnext, findprev,
+		gotoln,	help, redraw, quit, 
+		delline,
+		nop
+};
+
+
+
+#else
+
+char keycodetable[] = "jkil" 
+"JmKoIL"
+"OM"
+"\x7f" "u," 
+"#"
+
+"wfnp"
+"ghr"
+"qd";
+
+// command key function array, one to one correspondence to key array, above
+void (*func[]) () = {
+		left, down, up, right,
+		wleft, pgdown, pgdown, pgup, pgup, wright,
+		top, bottom,
+		bksp, undo, delete_one,
+		switchmode,
+		//		lnbegin, lnend, top, bottom,
+//		delete_one, bksp, delrol, undo,
+		writef, find, findnext, findprev,
+		gotoln,	help, redraw, 
+		quit, 
+		delline,
+		nop
+};
+#endif
+
+
+
+
 
 int main(int argc, char **argv){
 		int i=0;
