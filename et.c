@@ -148,16 +148,11 @@ typedef struct {
 } COORD;
 COORD xy;
 
-
 #define writen(str,n) write(STDOUT_FILENO,str,n)
 #define writestr(str) writen(str,sizeof(str)-1)
 #define write1(str) writen(str,strlen(str))
 #define getch() (char)getkey()
 
-
-
-
-void switchmode();
 
 void GetSetTerm(int set){
 		struct termios *termiop = &orig;
@@ -172,7 +167,6 @@ void GetSetTerm(int set){
 		} 
 		tcsetattr(0, TCSANOW, termiop); 
 } 
-
 
 
 void highlight(int hl){ 
